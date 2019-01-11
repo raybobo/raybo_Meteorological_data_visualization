@@ -1,0 +1,58 @@
+// @staticUrlHead : 'http://192.168.0.111/demo/huarunH5/assets/';
+@staticUrlHead : 'http://huarun-1252859479.file.myqcloud.com/';
+@import "./base.less";
+
+#target_canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.wrapperFullScreen() {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    // transition: opacity 1.0s ease;
+}
+
+
+.coverBgByUrl(@url) {
+    background-image: url("@{staticUrlHead}@{url}");
+    background-size:cover;
+    background-position: center;
+}
+
+.setCenterByWidth(@width) {
+    width: @width;
+    margin-left: @width * -0.5;
+    left: 50%;
+}
+.setYPosByTopAndHeight(@height, @top) {
+    top: ((unit(@top) + unit(@height) * 0.5)/ unit(6.67rem) * 100%);
+    height: @height;
+    margin-top: @height * -0.5;
+}
+
+/* @font-face {
+    font-family: "Futuraround";
+    src:url("http://192.168.0.111/demo/elephant/raybo/assets/fonts/FUTURAROUND-MEDIUM.OTF"),  
+} */
+
+/* button */
+
+button {
+    color: #ffffff;
+    background: transparent;
+    border: none;
+    position: absolute;
+    margin: 0.1rem;
+    display: inline-block;
+    padding: 0.5em 0.1rem;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.16rem;
+    letter-spacing: 0.04rem;
+}
+
