@@ -1,4 +1,7 @@
-import Maf from '../model/maf.js';
+
+import * as THREE from '../libs_es6/three.module.js';
+import Maf from "../module_es6/maf.js";
+import SimplexNoise from "../module_es6/simplex-noise.js";
 // 三维定点箭头指示矢量场
 function Scene7(params) {
   this.gridNum = 10;

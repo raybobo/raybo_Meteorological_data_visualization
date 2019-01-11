@@ -297,23 +297,19 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 			minFilter: minFilter,
 			magFilter: magFilter,
 			format: THREE.RGBAFormat,
-			// type: ( /(iPad|iPhone|iPod)/g.test( navigator.userAgent ) ) ? THREE.HalfFloatType : THREE.FloatType,
-			type: ( /(iPad|iPhone|iPod)/g.test( navigator.userAgent ) ) ? THREE.UnsignedIntType : THREE.UnsignedIntType,
-			stencilBuffer: false
+			type: ( /(iPad|iPhone|iPod)/g.test( navigator.userAgent ) ) ? THREE.HalfFloatType : THREE.FloatType,
+			stencilBuffer: false,
+			depthBuffer: false
 		} );
 
 		return renderTarget;
 
 	};
 
-    this.createTexture = function( sizeXTexture, sizeYTexture ) {
+	this.createTexture = function() {
 
-		sizeXTexture = sizeXTexture || sizeX;
-		sizeYTexture = sizeYTexture || sizeY;
-
-		var a = new Float32Array( sizeXTexture * sizeYTexture * 4 );
-		// var texture = new THREE.DataTexture( a, sizeX, sizeY, THREE.RGBAFormat, THREE.FloatType );
-		var texture = new THREE.DataTexture( a, sizeX, sizeY, THREE.UnsignedIntType, THREE.UnsignedIntType );
+		var a = new Float32Array( sizeX * sizeY * 4 );
+		var texture = new THREE.DataTexture( a, sizeX, sizeY, THREE.RGBAFormat, THREE.FloatType );
 		texture.needsUpdate = true;
 
 		return texture;
@@ -370,5 +366,3 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 	}
 
 }
-
-export {GPUComputationRenderer};

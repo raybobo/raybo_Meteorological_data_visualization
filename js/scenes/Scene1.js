@@ -1,3 +1,4 @@
+import * as THREE from '../libs_es6/three.module.js';
 // 基本框架
 function Scene1(params) {
   this.init = function(SceneController) {

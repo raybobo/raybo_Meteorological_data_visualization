@@ -1,3 +1,5 @@
+import * as THREE from '../libs_es6/three.module.js';
+import SimplexNoise from "../module_es6/simplex-noise.js";
 // 三维定点矩形指示矢量场，带透明度和缩放
 function Scene6(params) {
   this.gridNum = 10;

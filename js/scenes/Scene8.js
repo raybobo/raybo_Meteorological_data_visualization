@@ -1,3 +1,4 @@
+import * as THREE from '../libs_es6/three.module.js';
 import noise_3d_fly_through from "./shadertoy/noise_3d_fly_through.js";
 // 基本框架
 function Scene8(params) {

@@ -1,5 +1,7 @@
 // 二维运动箭头指示矢量场
-import Maf from "../model/maf.js";
+import * as THREE from '../libs_es6/three.module.js';
+import Maf from "../module_es6/maf.js";
+import SimplexNoise from "../module_es6/simplex-noise.js";
 function Scene2(params) {
   this.arrowNum = 3000;
   this.gridNum = 20;

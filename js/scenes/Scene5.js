@@ -1,4 +1,6 @@
 // 三维定点矩形指示矢量场
+import * as THREE from '../libs_es6/three.module.js';
+import SimplexNoise from "../module_es6/simplex-noise.js";
 function Scene5(params) {
   this.gridNum = 10;
   this.tempNoiseScale = 0.08;

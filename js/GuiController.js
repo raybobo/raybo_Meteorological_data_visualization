@@ -1,4 +1,4 @@
-// import THREE from './libs_es6/three.js';
+import * as THREE from './libs_es6/three.module.js';
 import Stats from './libs_es6/Stats.js';
 ///////////////
 //////////////
@@ -16,7 +16,7 @@ var GuiController = function() {
       bloomRadius: 0.1,
       alphaThreshold: 0.1,
       debugscale: 0.1,
-      scene: 8,
+      scene: 11,
     };
     this.gui = new dat.GUI();
 
@@ -31,6 +31,8 @@ var GuiController = function() {
           '7 三维运动箭头': 7,
           '8 Raymarching': 8,
           '9 Raymarching_2': 9,
+          '10 gpgpu water': 10,
+          '11 gpgpu test': 11,
         })
         .onChange(function(value) {
           // console.log(value);

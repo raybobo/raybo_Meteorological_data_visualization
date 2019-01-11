@@ -1,8 +1,10 @@
-// import THREE from './libs_es6/three.js';
-import OrbitControls from './libs_es6/THREE.OrbitControls.js';
-import EffectComposer from './postprocessing_es6/EffectComposer.js';
-import RenderPass from './postprocessing_es6/RenderPass.js';
+import * as THREE from './libs_es6/three.module.js';
+import OrbitControls from './module_es6/controls/THREE.OrbitControls.js';
+import EffectComposer from './module_es6/postprocessing/THREE.EffectComposer.js';
+import RenderPass from './module_es6/postprocessing/THREE.RenderPass.js';
 import Scene1 from './scenes/Scene1.js';
+import Scene10 from './scenes/Scene10.js';
+import Scene11 from './scenes/Scene11.js';
 import Scene2 from './scenes/Scene2.js';
 import Scene3 from './scenes/Scene3.js';
 import Scene4 from './scenes/Scene4.js';
@@ -16,8 +18,9 @@ function SceneController() {
   this.init = function() {
     this.threeSetup();
 
-    this.sceneInit(9);
+    this.sceneInit(10);
 
+    this.addControls();
     this.postProcessingSetup();
   };
 
@@ -28,34 +31,39 @@ function SceneController() {
     // this.scene.background = new THREE.Color(0x000000);
     // renderer
     this.canvas = document.getElementById('target_canvas');
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: this.canvas,
-      alpha: true,
-    });
+    this.renderer = new THREE.WebGLRenderer({canvas: this.canvas, alpha: true});
     this.renderer.setSize(window.innerWidth * 2, window.innerHeight * 2);
 
     // camera
     this.camera = new THREE.PerspectiveCamera(
         72, window.innerWidth / window.innerHeight, 0.1, 10000);
 
-    // this.camera = new THREE.PerspectiveCamera(36, window.innerWidth /
-    // window.innerHeight, 1, 10000); this.cameraRadius = 6.27;
-    // this.cameraHeight = 1.24;
-    // this.cameraTarget = new THREE.Vector3(0, this.cameraHeight - 0.16, 0);
-
     this.cameraRadius = 20;
     this.cameraHeight = 1.28;
     this.camera.position.set(0, this.cameraHeight, this.cameraRadius);
-    // console.log(this.scene.position);
 
     this.cameraTarget = new THREE.Vector3(0, this.cameraHeight - 0.026, 0);
     this.camera.lookAt(this.cameraTarget);
   };
   this.sceneInit = function(input) {
-    this.sceneRaybo = eval('new Scene' + input + '()');
+    this.sceneHolder = {};
+    this.sceneHolder.s1 = Scene1;
+    this.sceneHolder.s2 = Scene2;
+    this.sceneHolder.s3 = Scene3;
+    this.sceneHolder.s4 = Scene4;
+    this.sceneHolder.s5 = Scene5;
+    this.sceneHolder.s5 = Scene5;
+    this.sceneHolder.s6 = Scene6;
+    this.sceneHolder.s7 = Scene7;
+    this.sceneHolder.s8 = Scene8;
+    this.sceneHolder.s9 = Scene9;
+    this.sceneHolder.s10 = Scene10;
+    this.sceneHolder.s11 = Scene11;
+
+    var nowScene = Object.values(this.sceneHolder)[input - 1];
+    this.sceneRaybo = new nowScene();
     this.sceneRaybo.init(this);
     this.addHelper();
-    this.addControls();
   };
 
   this.postProcessingSetup = function() {
@@ -67,7 +75,7 @@ function SceneController() {
       minFilter: THREE.LinearFilter,
       magFilter: THREE.LinearFilter,
       format: THREE.RGBAFormat,
-      stencilBuffer: false,
+      stencilBuffer: false
     };
 
     this.renderTarget = new THREE.WebGLRenderTarget(width, height, parameters);
@@ -111,8 +119,6 @@ function SceneController() {
           // this.scene.add(text);
         }.bind(this));
   };
-
-
 
   this.update = function(nowTime) {
     const loopDuration = 16;

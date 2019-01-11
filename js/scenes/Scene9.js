@@ -1,5 +1,6 @@
+import * as THREE from '../libs_es6/three.module.js';
 import cloudy_shapes from "./shadertoy/cloudy_shapes.js";
-// 基本框架
+// raymarching cloud shadertoy
 function Scene9(params) {
   this.fragment_shader4 = cloudy_shapes;
   // gl_FragColor       tiem   vUv
