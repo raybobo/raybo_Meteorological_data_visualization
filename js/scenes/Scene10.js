@@ -78,7 +78,6 @@ function Scene10(params) {
     material.uniforms.specular.value = material.specular;
     material.uniforms.shininess.value = Math.max(material.shininess, 1e-4);
     material.uniforms.opacity.value = material.opacity;
-    console.log(material.uniforms);
     
     // Defines
     material.defines.WIDTH = this.WIDTH.toFixed(1);

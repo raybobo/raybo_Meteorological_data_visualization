@@ -31,8 +31,8 @@ function SceneController() {
     // this.scene.background = new THREE.Color(0x000000);
     // renderer
     this.canvas = document.getElementById('target_canvas');
-    this.renderer = new THREE.WebGLRenderer({canvas: this.canvas, alpha: true});
-    this.renderer.setSize(window.innerWidth * 2, window.innerHeight * 2);
+    this.renderer = new THREE.WebGLRenderer({canvas: this.canvas, alpha: true, antialias: true});
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     // camera
     this.camera = new THREE.PerspectiveCamera(
@@ -97,27 +97,27 @@ function SceneController() {
     this.gridHelper = new THREE.GridHelper(10, 10);
     this.scene.add(this.gridHelper);
     var loader = new THREE.FontLoader();
-    loader.load(
-        '../assets/fonts/helvetiker_regular.typeface.json', function(font) {
-          var matLite = new THREE.MeshBasicMaterial({
-            color: 0x006699,
-            transparent: true,
-            opacity: 0.4,
-            side: THREE.DoubleSide
-          });
-          var message = 'Raybo';
-          var shapes = font.generateShapes(message, 100);
-          var geometry = new THREE.ShapeBufferGeometry(shapes);
-          geometry.computeBoundingBox();
-          var xMid =
-              -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
-          geometry.translate(xMid, 0, 0);
-          geometry.scale(0.01, 0.01, 0.01);
-          // make shape ( N.B. edge view not visible )
-          var text = new THREE.Mesh(geometry, matLite);
-          text.position.z = -5;
-          // this.scene.add(text);
-        }.bind(this));
+    // loader.load(
+    //     '../assets/fonts/helvetiker_regular.typeface.json', function(font) {
+    //       var matLite = new THREE.MeshBasicMaterial({
+    //         color: 0x006699,
+    //         transparent: true,
+    //         opacity: 0.4,
+    //         side: THREE.DoubleSide
+    //       });
+    //       var message = 'Raybo';
+    //       var shapes = font.generateShapes(message, 100);
+    //       var geometry = new THREE.ShapeBufferGeometry(shapes);
+    //       geometry.computeBoundingBox();
+    //       var xMid =
+    //           -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+    //       geometry.translate(xMid, 0, 0);
+    //       geometry.scale(0.01, 0.01, 0.01);
+    //       // make shape ( N.B. edge view not visible )
+    //       var text = new THREE.Mesh(geometry, matLite);
+    //       text.position.z = -5;
+    //       // this.scene.add(text);
+    //     }.bind(this));
   };
 
   this.update = function(nowTime) {

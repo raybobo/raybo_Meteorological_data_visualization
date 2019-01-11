@@ -1,0 +1,175 @@
+@media screen {
+  html {
+    font-size: 85px !important;
+  }
+}
+@media screen and (min-width: 375px) {
+  html {
+    font-size: 100px !important;
+  }
+}
+@media screen and (min-width: 414px) {
+  html {
+    font-size: 110px !important;
+  }
+}
+@media screen and (min-width: 768px) {
+  html {
+    font-size: 200px !important;
+  }
+}
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+font,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-family: system-ui;
+  vertical-align: baseline;
+}
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+:focus {
+  outline: 0;
+}
+a,
+a:link,
+a:visited,
+a:hover,
+a:active {
+  text-decoration: none;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+th,
+td {
+  text-align: left;
+  font-weight: normal;
+}
+img,
+iframe {
+  border: none;
+  text-decoration: none;
+}
+ol,
+ul {
+  list-style: none;
+}
+input,
+textarea,
+select,
+button {
+  font-size: 100%;
+  font-family: inherit;
+}
+select {
+  margin: inherit;
+}
+hr {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: #000;
+  background-color: #000;
+  height: 1px;
+}
+body,
+html {
+  background-color: #000;
+  color: #00ffff;
+  margin: 0px;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 100px;
+  overflow: hidden;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#target_canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+/* @font-face {
+    font-family: "Futuraround";
+    src:url("http://192.168.0.111/demo/elephant/raybo/assets/fonts/FUTURAROUND-MEDIUM.OTF"),  
+} */
+/* button */
+button {
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  position: absolute;
+  margin: 0.1rem;
+  display: inline-block;
+  padding: 0.5em 0.1rem;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.16rem;
+  letter-spacing: 0.04rem;
+}

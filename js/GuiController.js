@@ -1,9 +1,11 @@
 import * as THREE from './libs_es6/three.module.js';
 import Stats from './libs_es6/Stats.js';
+import * as dat from './libs_es6/dat.gui.module.js';
 ///////////////
 //////////////
 var GuiController = function() {
   this.init = function(sceneController) {
+    
     this.initStats();
     this.initGui(sceneController);
   };
@@ -16,12 +18,12 @@ var GuiController = function() {
       bloomRadius: 0.1,
       alphaThreshold: 0.1,
       debugscale: 0.1,
-      scene: 11,
+      RayboScene: 10,
     };
     this.gui = new dat.GUI();
 
     this.gui
-        .add(params, 'scene', {
+        .add(params, 'RayboScene', {
           '1 基础场景': 1,
           '2 二维定点箭头': 2,
           '3 二维运动箭头': 3,
