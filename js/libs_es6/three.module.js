@@ -22151,7 +22151,7 @@ function WebXRManager( renderer ) {
 
 function WebGLRenderer( parameters ) {
 
-	console.log( 'THREE.WebGLRenderer', REVISION );
+	// console.log( 'THREE.WebGLRenderer', REVISION );
 
 	parameters = parameters || {};
 

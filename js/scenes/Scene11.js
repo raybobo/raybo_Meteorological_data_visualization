@@ -1,19 +1,25 @@
 import * as THREE from '../libs_es6/three.module.js';
 import GPUComputationRenderer from '../module_es6/GPUComputationRenderer.js';
-import testShader from './gpgpushader/testShader.js';
+import testShader from './gpgpushader/valueNoise.js';
 // 基本框架
 function Scene11(params) {
-  this.init = function(SceneController) {
+  this.init = function (SceneController) {
     this.scene = new THREE.Scene();
     this.renderer = SceneController.renderer;
     this.camera = SceneController.camera;
+    
+
+    this.cameraRadius = 20;
+    this.cameraHeight = 1.28;
+    this.camera.position.set(0, this.cameraHeight, this.cameraRadius);
+    
     this.WIDTH = 128;
     this.addVisualPlane();
     this.initGpuCompute();
     this.addLight();
     SceneController.scene = this.scene;
   };
-  this.addLight = function() {
+  this.addLight = function () {
     // light
     var light1 = new THREE.DirectionalLight(0xffffff, 1);
     light1.position.set(1, 1, 1);
@@ -25,15 +31,15 @@ function Scene11(params) {
     this.scene.add(new THREE.AmbientLight(0x666666));
   };
 
-  this.addVisualPlane = function() {
+  this.addVisualPlane = function () {
     var geometry =
-        new THREE.PlaneBufferGeometry(this.WIDTH * 0.1, this.WIDTH * 0.1, 1);
-    var material = new THREE.MeshBasicMaterial({map: null});
+      new THREE.PlaneBufferGeometry(this.WIDTH * 0.1, this.WIDTH * 0.1, 1);
+    var material = new THREE.MeshBasicMaterial({ map: null , side:THREE.DoubleSide});
     // var material = new THREE.MeshStandardMaterial({color: 0x00ff00});
     this.visualPlane = new THREE.Mesh(geometry, material);
     this.scene.add(this.visualPlane);
   };
-  this.initGpuCompute = function() {
+  this.initGpuCompute = function () {
     // Initialization...
 
     // Create computation renderer
@@ -46,14 +52,16 @@ function Scene11(params) {
     this.fillTexture(pos0);
 
     // Add texture variables
-    this.posVar =
-        this.gpuCompute.addVariable('texturePosition', testShader, pos0);
+    this.posVal =
+      this.gpuCompute.addVariable('texturePosition', testShader, pos0);
 
     // Add variable dependencies
-    this.gpuCompute.setVariableDependencies(this.posVar, [this.posVar]);
+    this.gpuCompute.setVariableDependencies(this.posVal, [this.posVal]);
 
     // Add custom uniforms
-    this.posVar.material.uniforms.time = {value: 0.0};
+    this.posVal.material.uniforms.time = { value: 0.0 };
+    // console.log(this.posVal.material.uniforms.time);
+
 
     // Check for completeness
     var error = this.gpuCompute.init();
@@ -61,7 +69,7 @@ function Scene11(params) {
       console.error(error);
     }
   };
-  this.fillTexture = function(texture) {
+  this.fillTexture = function (texture) {
     var theArray = texture.image.data;
     for (var k = 0, kl = theArray.length; k < kl; k += 4) {
       var index = k / 4;
@@ -72,10 +80,12 @@ function Scene11(params) {
       theArray[k + 3] = -1;
     }
   };
-  this.update = function() {
+
+  this.update = function () {
     this.gpuCompute.compute();
+    this.posVal.material.uniforms.time.value = performance.now() * 0.001;
     this.visualPlane.material.map =
-    this.gpuCompute.getCurrentRenderTarget(this.posVar).texture;
+      this.gpuCompute.getCurrentRenderTarget(this.posVal).texture;
   };
 }
 

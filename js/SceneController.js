@@ -3,8 +3,6 @@ import OrbitControls from './module_es6/controls/THREE.OrbitControls.js';
 import EffectComposer from './module_es6/postprocessing/THREE.EffectComposer.js';
 import RenderPass from './module_es6/postprocessing/THREE.RenderPass.js';
 import Scene1 from './scenes/Scene1.js';
-import Scene10 from './scenes/Scene10.js';
-import Scene11 from './scenes/Scene11.js';
 import Scene2 from './scenes/Scene2.js';
 import Scene3 from './scenes/Scene3.js';
 import Scene4 from './scenes/Scene4.js';
@@ -13,39 +11,42 @@ import Scene6 from './scenes/Scene6.js';
 import Scene7 from './scenes/Scene7.js';
 import Scene8 from './scenes/Scene8.js';
 import Scene9 from './scenes/Scene9.js';
+import Scene10 from './scenes/Scene10.js';
+import Scene11 from './scenes/Scene11.js';
+import Scene12 from './scenes/Scene12.js';
 
 function SceneController() {
-  this.init = function() {
+  this.init = function (initSceneIndex) {
     this.threeSetup();
 
-    this.sceneInit(10);
+    this.sceneInit(initSceneIndex);
 
     this.addControls();
     this.postProcessingSetup();
   };
 
-  this.threeSetup = function() {
+  this.threeSetup = function () {
     this.clock = new THREE.Clock();
     // scene
     this.scene = new THREE.Scene();
     // this.scene.background = new THREE.Color(0x000000);
     // renderer
     this.canvas = document.getElementById('target_canvas');
-    this.renderer = new THREE.WebGLRenderer({canvas: this.canvas, alpha: true, antialias: true});
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, alpha: true, antialias: true });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     // camera
     this.camera = new THREE.PerspectiveCamera(
-        72, window.innerWidth / window.innerHeight, 0.1, 10000);
+      72, window.innerWidth / window.innerHeight, 0.1, 10000);
 
     this.cameraRadius = 20;
     this.cameraHeight = 1.28;
     this.camera.position.set(0, this.cameraHeight, this.cameraRadius);
 
-    this.cameraTarget = new THREE.Vector3(0, this.cameraHeight - 0.026, 0);
+    this.cameraTarget = new THREE.Vector3(0, 0, 0);
     this.camera.lookAt(this.cameraTarget);
   };
-  this.sceneInit = function(input) {
+  this.sceneInit = function (input) {
     this.sceneHolder = {};
     this.sceneHolder.s1 = Scene1;
     this.sceneHolder.s2 = Scene2;
@@ -59,6 +60,7 @@ function SceneController() {
     this.sceneHolder.s9 = Scene9;
     this.sceneHolder.s10 = Scene10;
     this.sceneHolder.s11 = Scene11;
+    this.sceneHolder.s12 = Scene12;
 
     var nowScene = Object.values(this.sceneHolder)[input - 1];
     this.sceneRaybo = new nowScene();
@@ -66,7 +68,7 @@ function SceneController() {
     this.addHelper();
   };
 
-  this.postProcessingSetup = function() {
+  this.postProcessingSetup = function () {
     this.renderPass = new RenderPass(this.scene, this.camera);
 
     var width = window.innerWidth || 1;
@@ -86,12 +88,12 @@ function SceneController() {
     this.composer.addPass(this.renderPass);
   };
 
-  this.addControls = function() {
+  this.addControls = function () {
     // controls
     this.controls = new OrbitControls(this.camera);
   };
 
-  this.addHelper = function() {
+  this.addHelper = function () {
     this.axesHelper = new THREE.AxesHelper(10);
     this.scene.add(this.axesHelper);
     this.gridHelper = new THREE.GridHelper(10, 10);
@@ -120,7 +122,7 @@ function SceneController() {
     //     }.bind(this));
   };
 
-  this.update = function(nowTime) {
+  this.update = function (nowTime) {
     const loopDuration = 16;
     const tmpVector = new THREE.Vector3();
     const tmpMat = new THREE.Matrix4();
@@ -130,14 +132,14 @@ function SceneController() {
     this.sceneRaybo.update(nowTime);
   };
 
-  this.render = function() {
+  this.render = function () {
     // console.log(performance.now());
     this.update(performance.now() * 0.001);
 
     this.renderer.render(this.scene, this.camera);
   };
 
-  this.resize = function(width, height) {
+  this.resize = function (width, height) {
     // camera
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
@@ -152,4 +154,4 @@ function SceneController() {
     }
   };
 }
-export {SceneController};
+export { SceneController };

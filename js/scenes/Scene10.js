@@ -2,10 +2,10 @@ import * as THREE from '../libs_es6/three.module.js';
 import GPUComputationRenderer from '../module_es6/GPUComputationRenderer.js';
 import SimplexNoise from '../module_es6/simplex-noise.js';
 
-import heightmapFragmentShader from './gpgpushader/heightmapFragmentShader.js';
-import readWaterLevelFragmentShader from './gpgpushader/readWaterLevelFragmentShader.js';
-import smoothFragmentShader from './gpgpushader/smoothFragmentShader.js';
-import waterVertexShader from './gpgpushader/waterVertexShader.js';
+import heightmapFragmentShader from './gpgpuwater/heightmapFragmentShader.js';
+import readWaterLevelFragmentShader from './gpgpuwater/readWaterLevelFragmentShader.js';
+import smoothFragmentShader from './gpgpuwater/smoothFragmentShader.js';
+import waterVertexShader from './gpgpuwater/waterVertexShader.js';
 
 // webgl_gpgpu_water example
 function Scene10(params) {
@@ -47,7 +47,7 @@ function Scene10(params) {
   this.addVisualPlane = function() {
     var geometry =
         new THREE.PlaneBufferGeometry(this.WIDTH * 0.1, this.WIDTH * 0.1, 1);
-    var material = new THREE.MeshBasicMaterial({map: null});
+    var material = new THREE.MeshBasicMaterial({map: null, side:THREE.DoubleSide});
     // var material = new THREE.MeshStandardMaterial({color: 0x00ff00});
     this.visualPlane = new THREE.Mesh(geometry, material);
     this.visualPlane.position.y += this.WIDTH * 0.05;
