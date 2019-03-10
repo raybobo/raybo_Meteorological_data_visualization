@@ -14,6 +14,8 @@ import Scene9 from './scenes/Scene9.js';
 import Scene10 from './scenes/Scene10.js';
 import Scene11 from './scenes/Scene11.js';
 import Scene12 from './scenes/Scene12.js';
+import Scene13 from './scenes/Scene13.js';
+import Scene14 from './scenes/Scene14.js';
 
 function SceneController() {
   this.init = function (initSceneIndex) {
@@ -47,6 +49,7 @@ function SceneController() {
     this.camera.lookAt(this.cameraTarget);
   };
   this.sceneInit = function (input) {
+    
     this.sceneHolder = {};
     this.sceneHolder.s1 = Scene1;
     this.sceneHolder.s2 = Scene2;
@@ -61,11 +64,13 @@ function SceneController() {
     this.sceneHolder.s10 = Scene10;
     this.sceneHolder.s11 = Scene11;
     this.sceneHolder.s12 = Scene12;
+    this.sceneHolder.s13 = Scene13;
+    this.sceneHolder.s14 = Scene14;
 
     var nowScene = Object.values(this.sceneHolder)[input - 1];
     this.sceneRaybo = new nowScene();
     this.sceneRaybo.init(this);
-    this.addHelper();
+
   };
 
   this.postProcessingSetup = function () {
@@ -93,10 +98,10 @@ function SceneController() {
     this.controls = new OrbitControls(this.camera);
   };
 
-  this.addHelper = function () {
-    this.axesHelper = new THREE.AxesHelper(10);
+  this.addHelper = function (width) {
+    this.axesHelper = new THREE.AxesHelper(width);
     this.scene.add(this.axesHelper);
-    this.gridHelper = new THREE.GridHelper(10, 10);
+    this.gridHelper = new THREE.GridHelper(width, width);
     this.scene.add(this.gridHelper);
     var loader = new THREE.FontLoader();
     // loader.load(

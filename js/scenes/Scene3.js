@@ -15,6 +15,7 @@ function Scene2(params) {
     this.addBorder();
     this.addNoiseCube();
     SceneController.scene = this.scene;
+    SceneController.addHelper(10);
   };
 
   this.addBorder = function() {

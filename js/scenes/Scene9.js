@@ -19,6 +19,7 @@ function Scene9(params) {
     this.addCube();
     this.addLight();
     SceneController.scene = this.scene;
+    SceneController.addHelper(10);
   };
   this.addLight = function() {
     // light

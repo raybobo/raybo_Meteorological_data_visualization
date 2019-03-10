@@ -10,6 +10,7 @@ function Scene5(params) {
     this.addNoiseCube();
     this.addLight();
     SceneController.scene = this.scene;
+    SceneController.addHelper(10);
   };
   this.addLight = function() {
     // light

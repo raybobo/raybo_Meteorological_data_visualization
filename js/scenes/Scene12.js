@@ -1,15 +1,15 @@
 import * as THREE from '../libs_es6/three.module.js';
 import Maf from "../module_es6/maf.js";
+import SVGLoader from "../module_es6/SVGLoader.js";
 
-import { MeshLine, MeshLineMaterial } from '../module_es6/three-meshline.js';
 import { ConstantSpline } from '../module_es6/three-constantSpline.js';
 
+import { MeshLine, MeshLineMaterial } from '../module_es6/three-meshline.js';
 import SimplexNoise from "../module_es6/simplex-noise.js";
 // 基本框架
 function Scene12(params) {
   this.init = function (SceneController) {
     this.scene = new THREE.Scene();
-    this.renderer = SceneController.renderer;
     this.camera = SceneController.camera;
     this.resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
     // reset camera
@@ -22,6 +22,8 @@ function Scene12(params) {
     this.addLight();
     SceneController.scene = this.scene;
 
+    SceneController.addHelper(10);
+
 
     // noise
 
@@ -30,14 +32,73 @@ function Scene12(params) {
     // add world map mesh 
     // add mesh line 
     // set flag
-    this.readSVG()
-      .then(this.drawSVG.bind(this));
-    // .then(this.addMeshLine.bind(this));
+    this.addSVGMap();
 
     this.lineVerticesLength = 100.0;
     this.lineCount = 100.0;
     this.addMeshLine();
     //
+  };
+  this.addSVGMap = function () {
+    var loader = new SVGLoader();
+
+    // load a SVG resource
+    loader.load(
+      // resource URL
+      'assets/worldLow.svg',
+      // called when the resource is loaded
+      function (paths) {
+
+        var group = new THREE.Group();
+
+        for (var i = 0; i < paths.length; i++) {
+
+          var path = paths[i];
+
+          var material = new THREE.MeshBasicMaterial({
+            color: new THREE.Color(Math.random() * 0xffffff),
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.3,
+            depthWrite: true,
+            wireframe: false
+          });
+
+          var shapes = path.toShapes(true);
+
+          for (var j = 0; j < shapes.length; j++) {
+
+            var shape = shapes[j];
+            var geometry = new THREE.ShapeBufferGeometry(shape);
+            var mesh = new THREE.Mesh(geometry, material);
+            group.add(mesh);
+
+          }
+
+        }
+        group.scale.set(0.1, 0.1, 0.1);
+        group.rotation.x = Math.PI * 1.0;
+        
+        var tempBoxHelper = new THREE.BoxHelper(group);
+        tempBoxHelper.geometry.computeBoundingBox();
+        
+        // calc bbx
+        var bbx = tempBoxHelper.geometry.boundingBox;
+        var tx = (bbx.max.x - bbx.min.x) / 2.0;
+        var ty = (bbx.max.y - bbx.min.y) / 2.0;
+        
+        group.rotation.x = Math.PI * 1.0;
+        group.position.set(-tx, ty, 0);
+        //
+        // console.log(tempBoxHelper);
+        this.mapBoxHelper = new THREE.BoxHelper(group);
+        this.mapBoxHelper.geometry.computeBoundingBox();
+        this.scene.add(this.mapBoxHelper);
+        
+
+        this.scene.add(group);
+
+      }.bind(this));
   };
   this.addMeshLine = function () {
     this.linesHolder = [];
@@ -55,7 +116,7 @@ function Scene12(params) {
 
       var tempH = Maf.map(0.0, 100.0, 0.0, 255.0, index);
       // console.log(tempH);
-       
+
       var trailMaterial = new MeshLineMaterial({
         color: new THREE.Color("hsl(" + tempH + ", 190%, 50%)"),
         opacity: 1,
@@ -105,123 +166,6 @@ function Scene12(params) {
       transparent: true
     });
   };
-  this.readSVG = function () {
-
-    return new Promise(function (resolve, reject) {
-      var ajax = new XMLHttpRequest();
-      ajax.open("GET", "assets/worldLow.svg", true);
-      ajax.send();
-      ajax.addEventListener('load', function (e) {
-        resolve(ajax.responseText);
-      });
-    });
-
-  };
-  this.drawSVG = function (source) {
-    // console.log(source);
-    var lines = [];
-    var parser = new DOMParser();
-    var doc = parser.parseFromString(source, "image/svg+xml");
-    var pathNodes = doc.querySelectorAll('path');
-
-    [].forEach.call(pathNodes, function (p) {
-
-      if (p instanceof SVGPathElement && p.pathSegList) {
-
-        var line = new THREE.Geometry();
-        var vertices = line.vertices;
-        var x, y;
-        var ox, oy;
-        var px, py;
-
-        var segments = p.pathSegList;
-        for (var i = 0; i < segments.numberOfItems; i++) {
-
-          var segment = segments.getItem(i);
-
-          var types = [SVGPathSegMovetoAbs, SVGPathSegLinetoRel, SVGPathSegLinetoVerticalRel, SVGPathSegLinetoHorizontalRel, SVGPathSegLinetoHorizontalAbs, SVGPathSegLinetoVerticalAbs, SVGPathSegClosePath, SVGPathSegLinetoAbs];
-          var found = false;
-          types.forEach(function (t) {
-            if (segment instanceof t) {
-              found = true;
-            }
-          });
-          if (!found) {
-            console.log(segment);
-          }
-
-          if (segment instanceof SVGPathSegMovetoAbs) {
-            x = segment.x;
-            y = segment.y;
-            ox = x;
-            oy = y;
-            // add line;
-            lines.push(line);
-            line = new THREE.Geometry();
-            line.vertices.push(new THREE.Vector3(x, y, 0));
-          }
-          if (segment instanceof SVGPathSegLinetoRel) {
-            x = px + segment.x;
-            y = py + segment.y;
-            line.vertices.push(new THREE.Vector3(x, y, 0));
-          }
-          if (segment instanceof SVGPathSegLinetoAbs) {
-            x = segment.x;
-            y = segment.y;
-            line.vertices.push(new THREE.Vector3(x, y, 0));
-          }
-          if (segment instanceof SVGPathSegLinetoVerticalRel) {
-            x = px;
-            y = py + segment.y;
-            line.vertices.push(new THREE.Vector3(x, y, 0));
-          }
-          if (segment instanceof SVGPathSegLinetoHorizontalRel) {
-            x = px + segment.x;
-            y = py;
-            line.vertices.push(new THREE.Vector3(x, y, 0));
-          }
-          if (segment instanceof SVGPathSegLinetoHorizontalAbs) {
-            x = segment.x;
-            y = py;
-            line.vertices.push(new THREE.Vector3(x, y, 0));
-          }
-          if (segment instanceof SVGPathSegLinetoVerticalAbs) {
-            x = px;
-            y = segment.y;
-            line.vertices.push(new THREE.Vector3(x, y, 0));
-          }
-          if (segment instanceof SVGPathSegClosePath) {
-            x = ox;
-            y = oy;
-            line.vertices.push(new THREE.Vector3(x, y, 0));
-            // add line
-            lines.push(line);
-            line = new THREE.Geometry();
-          }
-
-          px = x;
-          py = y;
-
-        }
-
-      }
-
-    });
-
-    this.mapLinesHolder = new THREE.Group();
-    lines.forEach(function (l) {
-      this.makeLine(l);
-    }.bind(this));
-    this.mapLinesHolder.scale.set(0.1, 0.1, 0.1);
-    this.mapLinesHolder.rotation.y = -Math.PI * 0.5;
-    this.scene.add(this.mapLinesHolder);
-
-    this.mapBoxHelper = new THREE.BoxHelper(this.mapLinesHolder);
-    this.mapBoxHelper.geometry.computeBoundingBox();
-    this.scene.add(this.mapBoxHelper);
-
-    // console.log(this.mapBoxHelper);
-  }
 
   this.makeLine = function (geo) {
 
@@ -255,7 +199,7 @@ function Scene12(params) {
   this.checkOutOfMap = function (inLine) {
     if (!this.mapBoxHelper) return;
     var bbx = this.mapBoxHelper.geometry.boundingBox;
-    // console.log(inPos);
+    // console.log(bbx);
     // world position
     var wp = new THREE.Vector3().copy(inLine.head).add(inLine.mesh.position);
 
@@ -287,7 +231,7 @@ function Scene12(params) {
       this.linesHolder.forEach(function (element) {
         // console.log(element);
         // Advance the trail by one position
-        var tempPar = 0.2;
+        var tempPar = 0.1;
         var tempAngle = this.noise.noise3D(
           element.head.x * tempPar,
           element.head.y * tempPar,

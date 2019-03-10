@@ -13,6 +13,7 @@ function Scene7(params) {
     this.addLight();
     this.addNoiseCube();
     SceneController.scene = this.scene;
+    SceneController.addHelper(10);
   };
 
   this.addLight = function() {
@@ -98,7 +99,8 @@ function Scene7(params) {
         j = element.mesh.position.y;
         k = element.mesh.position.z;
       }
-
+      
+      // 3d simulation
       var tempAngle1 = this.noise.noise3D(
           i * this.tempScale, j * this.tempScale, nowTime * 0.3);
       tempAngle1 = Maf.map(-1.0, 1.0, -Math.PI, Math.PI, tempAngle1);

@@ -7,17 +7,19 @@ function Scene11(params) {
     this.scene = new THREE.Scene();
     this.renderer = SceneController.renderer;
     this.camera = SceneController.camera;
-    
+
 
     this.cameraRadius = 20;
     this.cameraHeight = 1.28;
     this.camera.position.set(0, this.cameraHeight, this.cameraRadius);
-    
+
     this.WIDTH = 128;
     this.addVisualPlane();
     this.initGpuCompute();
     this.addLight();
     SceneController.scene = this.scene;
+
+    SceneController.addHelper(10);
   };
   this.addLight = function () {
     // light
@@ -34,7 +36,7 @@ function Scene11(params) {
   this.addVisualPlane = function () {
     var geometry =
       new THREE.PlaneBufferGeometry(this.WIDTH * 0.1, this.WIDTH * 0.1, 1);
-    var material = new THREE.MeshBasicMaterial({ map: null , side:THREE.DoubleSide});
+    var material = new THREE.MeshBasicMaterial({ map: null, side: THREE.DoubleSide });
     // var material = new THREE.MeshStandardMaterial({color: 0x00ff00});
     this.visualPlane = new THREE.Mesh(geometry, material);
     this.scene.add(this.visualPlane);
@@ -86,6 +88,9 @@ function Scene11(params) {
     this.posVal.material.uniforms.time.value = performance.now() * 0.001;
     this.visualPlane.material.map =
       this.gpuCompute.getCurrentRenderTarget(this.posVal).texture;
+    // console.log(this.gpuCompute.getCurrentRenderTarget(this.posVal).texture);
+    
+    
   };
 }
 

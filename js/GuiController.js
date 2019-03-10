@@ -30,12 +30,14 @@ var GuiController = function() {
           // '4 三维定点箭头': 4,
           // '5 三维定点矩形': 5,
           // '6 三维定点矩形_2': 6,
-          // '7 三维运动箭头': 7,
+          '7 三维运动箭头': 7,
           // '8 Raymarching': 8,
           // '9 Raymarching_2': 9,
           '10 gpgpu water': 10,
           '11 gpgpu value noise': 11,
-          '12 mesh line map': 12,
+          '12 mesh line 2D move': 12,
+          '13 mesh line 3D move': 13,
+          // '14 3D field to 2D': 14,
         })
         .onChange(function(value) {
           // console.log(value);

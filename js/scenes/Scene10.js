@@ -23,6 +23,7 @@ function Scene10(params) {
     this.addLight();
     this.setMouseEvent();
     SceneController.scene = this.scene;
+    SceneController.addHelper(10);
   };
   this.initStatic = function() {
     this.WIDTH = 128;
@@ -240,7 +241,7 @@ function Scene10(params) {
     // this.visualPlane
     this.visualPlane.material.map =
         this.gpuCompute.getCurrentRenderTarget(this.heightmapVariable).texture;
-    // console.log(this.visualPlane.material.map);
+    // console.log(this.waterMesh.geometry.attributes.position.array);
   };
 }
 
