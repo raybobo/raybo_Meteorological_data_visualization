@@ -37,7 +37,8 @@ var GuiController = function() {
           '11 gpgpu value noise': 11,
           '12 mesh line 2D move': 12,
           '13 mesh line 3D move': 13,
-          // '14 3D field to 2D': 14,
+          '14 Scalar field meshline CPU': 14,
+          '15 Vector field meshline CPU': 15,
         })
         .onChange(function(value) {
           // console.log(value);

@@ -5,7 +5,7 @@ var sceneController, guiController;
 
 
 function init() {
-  var initSceneIndex = 10;
+  var initSceneIndex = 14;
   // console.clear();
   console.log(
       '%cMade with three.js by Raybo',
@@ -16,8 +16,6 @@ function init() {
 
   guiController = new GuiController();
   guiController.init(sceneController, initSceneIndex);
-
-
 
   window.addEventListener('resize', onResize, false);
 }

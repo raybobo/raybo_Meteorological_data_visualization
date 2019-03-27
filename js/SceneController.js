@@ -16,6 +16,7 @@ import Scene11 from './scenes/Scene11.js';
 import Scene12 from './scenes/Scene12.js';
 import Scene13 from './scenes/Scene13.js';
 import Scene14 from './scenes/Scene14.js';
+import Scene15 from './scenes/Scene15.js';
 
 function SceneController() {
   this.init = function (initSceneIndex) {
@@ -66,6 +67,7 @@ function SceneController() {
     this.sceneHolder.s12 = Scene12;
     this.sceneHolder.s13 = Scene13;
     this.sceneHolder.s14 = Scene14;
+    this.sceneHolder.s15 = Scene15;
 
     var nowScene = Object.values(this.sceneHolder)[input - 1];
     this.sceneRaybo = new nowScene();

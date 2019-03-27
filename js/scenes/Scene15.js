@@ -1,15 +1,13 @@
 import * as THREE from "../libs_es6/three.module.js";
 import Maf from "../module_es6/maf.js";
 import { MeshLine, MeshLineMaterial } from "../module_es6/three-meshline.js";
-import gfsData from "./echartData/gfs.js";
-import gfsData2 from "./echartData/gfs2.js";
+import windsData from "./echartData/winds.js";
 // 基本框架
 var dataW = 360;
 var dataH = 181;
 var scaleRate = 0.1;
 
-
-function Scene14(params) {
+function Scene15(params) {
   this.init = function(SceneController) {
     this.scene = new THREE.Scene();
     SceneController.scene = this.scene;
@@ -39,13 +37,13 @@ function Scene14(params) {
       dataH * scaleRate
     );
     var texture = new THREE.TextureLoader().load(
-      "./../../assets/data/gfsPng/rg.png"
       // "./../../assets/data/gfsPng/g.png"
-      // "./../../assets/data/windsPng/rg.png"
+      // "./../../assets/data/gfsPng/g.png"
+      "./../../assets/data/windsPng/rg.png"
       // "./../../assets/data/windsPng/g.png"
     );
     texture.flipY = false;
-    // console.log(texture);
+    console.log(texture);
     
     var material = new THREE.MeshBasicMaterial({
       color: 0xffffff,
@@ -59,7 +57,7 @@ function Scene14(params) {
     this.linesHolder = [];
     this.linesGroup = new THREE.Group();
     for (let index = 0; index < this.lineCount; index++) {
-      var tempTrailMeshLine = new Scene14MeshLine();
+      var tempTrailMeshLine = new Scene15MeshLine();
 
       this.linesGroup.add(tempTrailMeshLine.trailMesh);
       this.linesHolder.push(tempTrailMeshLine);
@@ -79,7 +77,7 @@ function Scene14(params) {
   };
 }
 
-function Scene14MeshLine() {
+function Scene15MeshLine() {
   this.lineVerticesLength = 12.0;
   this.initLife = 120.0;
   this.getHead = function() {
@@ -113,16 +111,14 @@ function Scene14MeshLine() {
     
     this.life--;
 
-    var dataXIndex = Math.floor(this.head.x / scaleRate + dataW * 0.5);
-    var dataYIndex = Math.floor(this.head.y / scaleRate + dataH * 0.5);
-    var dataXValue = gfsData.data[dataYIndex * dataW + dataXIndex];
-    var dataYValue = gfsData2.data[dataYIndex * dataW + dataXIndex];
-    // console.log(dataVec);
-    
+    var dataX = Math.floor(this.head.x / scaleRate + dataW * 0.5);
+    var dataY = Math.floor(this.head.y / scaleRate + dataH * 0.5);
+    var dataVec = windsData.data[dataY * dataW + dataX];
+
     
 
     // this.headAngle = 0.1;
-    // this.tempAngle = dataVec;
+    // this.tempAngle = Math.random() * 2.0 - 1.0;
     // this.tempAngle = Maf.map(-1.0, 1.0, -Math.PI, Math.PI, this.tempAngle);
     // var tempOffset = new THREE.Vector3(
     //   0 + 0.2 * Math.cos(this.tempAngle),
@@ -131,8 +127,8 @@ function Scene14MeshLine() {
     // );
     var dataScaleRate = 0.004;
     var tempOffset = new THREE.Vector3(
-      dataXValue * dataScaleRate,
-      dataYValue * dataScaleRate,
+      dataVec[0] * dataScaleRate,
+      dataVec[1] * dataScaleRate,
       0
     );
 
@@ -185,4 +181,4 @@ function Scene14MeshLine() {
   this.initMesh();
 }
 
-export default Scene14;
+export default Scene15;
