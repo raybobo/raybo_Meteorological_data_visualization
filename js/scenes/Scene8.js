@@ -20,7 +20,27 @@ function Scene8(params) {
     this.addLight();
     SceneController.scene = this.scene;
     SceneController.addHelper(10);
+
+    
+    SceneController.orbitControls.enabled = false;
+    SceneController.cameraResetPos();
+    SceneController.triggleHelper(false);
+    SceneController.applyInfoTitleAndDetail(
+      "场景八",
+      "光线追踪渲染 noise 生成的 SDF。\n" +
+        "\n " +
+        "通过 noise 函数生成 SDF （有向距离场），在此中推动摄像机前进，最终将结果渲染到一个片面中。\n"
+    );
+
   };
+
+  this.initSceneGUI = function(guiController) {
+
+    // this.guiFolder.open();
+  };
+
+
+
   this.addLight = function() {
     // light
     var light1 = new THREE.DirectionalLight(0xffffff, 1);

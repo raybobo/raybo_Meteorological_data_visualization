@@ -1,4 +1,4 @@
-import * as THREE from '../libs_es6/three.module.js';
+import * as THREE from "../libs_es6/three.module.js";
 import Maf from "../module_es6/maf.js";
 import SimplexNoise from "../module_es6/simplex-noise.js";
 // 三维定点箭头指示矢量场
@@ -7,11 +7,59 @@ function Scene4(params) {
   this.tempScale = 0.08;
   this.init = function(SceneController) {
     this.scene = new THREE.Scene();
+    this.sceneController = SceneController;
     this.initArrowMesh();
     this.addLight();
     this.addNoiseCube();
     SceneController.scene = this.scene;
     SceneController.addHelper(10);
+
+    
+    SceneController.orbitControls.enabled = true;
+    SceneController.cameraResetPos();
+
+    
+    SceneController.applyInfoTitleAndDetail(
+      "场景四",
+      "三维运动箭头。\n" +
+        "\n " +
+        "通过 noise 函数模拟流场，基于每个箭头位置计算当前旋转角度。\n" +
+        "右上角图形界面可以调整箭头和背景颜色。"
+    );
+  };
+  this.initSceneGUI = function(guiController) {
+    this.guiParms = {
+      arrowColor: "#ffffff",
+      bgColor: "#000000",
+      displayHelper : true
+      // light1: 1.0,
+      // light2: 0.1
+    };
+    // console.log(guiController);
+    this.guiFolder = guiController.gui.addFolder("Scene");
+    this.guiFolder.add(this.guiParms, "displayHelper").onChange(
+      function(value) {
+        this.sceneController.triggleHelper(value);
+      }.bind(this)
+    );
+    this.guiFolder.addColor(this.guiParms, "arrowColor").onChange(
+      function(value) {
+        for (let index = 0; index < this.cubeHolder.length; index++) {
+          var element = this.cubeHolder[index];
+          var cube = element.mesh;
+          cube.material.color.set(value);
+          // this.scene.background
+          // console.log(this.scene.background = new THREE.Color(value));
+        }
+      }.bind(this)
+    );
+    this.guiFolder.addColor(this.guiParms, "bgColor").onChange(
+      function(value) {
+        this.scene.background = new THREE.Color(value);
+      }.bind(this)
+    );
+
+    this.guiFolder.open();
   };
 
   this.addLight = function() {
@@ -27,14 +75,13 @@ function Scene4(params) {
   };
 
   this.initArrowMesh = function() {
-
     this.arrowGeometry = new THREE.ConeGeometry(0.2, 0.6, 8);
     this.arrowGeometry.rotateX(Math.PI * 0.5);
 
     var material = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       transparent: true,
-      opacity: 0.0,
+      opacity: 0.0
       // wireframe: true,
       // map:
     });
@@ -60,17 +107,24 @@ function Scene4(params) {
           cube.position.set(i, j, k);
 
           // rotate by noise
-          var tempAngle =
-              this.noise.noise3D(i * this.tempScale, j * this.tempScale, 0);
+          var tempAngle = this.noise.noise3D(
+            i * this.tempScale,
+            j * this.tempScale,
+            0
+          );
           tempAngle = Maf.map(-1.0, 1.0, -Math.PI, Math.PI, tempAngle);
           // console.log(tempAngle);
           var tempOffset = new THREE.Vector3(
-              0 + 10 * Math.cos(tempAngle), 0 + 10 * Math.sin(tempAngle), 0);
+            0 + 10 * Math.cos(tempAngle),
+            0 + 10 * Math.sin(tempAngle),
+            0
+          );
           cube.lookAt(
-              new THREE.Vector3(0, 0, 0).copy(cube.position).add(tempOffset));
+            new THREE.Vector3(0, 0, 0).copy(cube.position).add(tempOffset)
+          );
           // cube.lookAt(new THREE.Vector3(0, 0, -5));
           this.scene.add(cube);
-          this.cubeHolder.push({i: i, j: j, k: k, mesh: cube});
+          this.cubeHolder.push({ i: i, j: j, k: k, mesh: cube });
         }
       }
     }
@@ -84,18 +138,28 @@ function Scene4(params) {
       var cube = element.mesh;
 
       var tempAngle1 = this.noise.noise3D(
-          i * this.tempScale, j * this.tempScale, nowTime * 0.3);
+        i * this.tempScale,
+        j * this.tempScale,
+        nowTime * 0.3
+      );
       tempAngle1 = Maf.map(-1.0, 1.0, -Math.PI, Math.PI, tempAngle1);
-      
+
       var tempAngle2 = this.noise.noise3D(
-          j * this.tempScale, k * this.tempScale, nowTime * 0.3);
+        j * this.tempScale,
+        k * this.tempScale,
+        nowTime * 0.3
+      );
       tempAngle2 = Maf.map(-1.0, 1.0, -Math.PI, Math.PI, tempAngle2);
 
       var tempOffset = new THREE.Vector3(
-          Math.sin(tempAngle1) * Math.cos(tempAngle2), Math.sin(tempAngle1) * Math.sin(tempAngle2), Math.cos(tempAngle2));
-      
+        Math.sin(tempAngle1) * Math.cos(tempAngle2),
+        Math.sin(tempAngle1) * Math.sin(tempAngle2),
+        Math.cos(tempAngle2)
+      );
+
       cube.lookAt(
-          new THREE.Vector3(0, 0, 0).copy(cube.position).add(tempOffset));
+        new THREE.Vector3(0, 0, 0).copy(cube.position).add(tempOffset)
+      );
       // cube.scale.x = tempOffset.x;
       // cube.scale.y = tempOffset.x;
       // cube.scale.z = tempOffset.x;
@@ -108,7 +172,6 @@ function Scene4(params) {
 }
 
 export default Scene4;
-
 
 // 2019/1/4
 // - 使用两个noise 模拟的正确性？

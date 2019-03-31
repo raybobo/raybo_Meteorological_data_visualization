@@ -1,18 +1,70 @@
 // 二维定点箭头指示矢量场
-import * as THREE from '../libs_es6/three.module.js';
+import * as THREE from "../libs_es6/three.module.js";
 import Maf from "../module_es6/maf.js";
 import SimplexNoise from "../module_es6/simplex-noise.js";
 function Scene2(params) {
-  this.gridNum = 20;
+  this.gridNum = 10; // real : mult 2 add 1
   this.tempScale = 0.08;
   this.init = function(SceneController) {
     this.scene = new THREE.Scene();
+    this.sceneController = SceneController;
     this.initArrowGeometry();
     this.initArrowMesh();
     this.addLight();
     this.addNoiseCube();
     SceneController.scene = this.scene;
     SceneController.addHelper(10);
+
+    
+    SceneController.orbitControls.enabled = true;
+    SceneController.cameraResetPos();
+    
+    SceneController.applyInfoTitleAndDetail(
+      "场景二",
+      "二维定点箭头 21 X 21 矩阵。\n" +
+        "\n " +
+        "通过 noise 函数模拟流场，基于每个箭头位置计算当前旋转角度。\n" +
+        "添加摄像机轨道控制，" +
+        "按下左键以坐标原点为中心旋转视角，" +
+        "使用滚轮拉近拉远摄像机。\n" +
+        "右上角图形界面可以调整灯光参数。"
+    );
+  };
+
+  this.initSceneGUI = function(guiController) {
+    this.guiParms = {
+      arrowColor: "#ffae23",
+      light1: 1.0,
+      light2: 0.1,
+      displayHelper : true
+    };
+    // console.log(guiController);
+    this.guiFolder = guiController.gui.addFolder("Scene");
+    // this.guiFolder.addColor(this.guiParms, "arrowColor").onChange(
+    //   function(value) {
+    //     for (let index = 0; index < this.cubeHolder.length; index++) {
+    //       var element = this.cubeHolder[index];
+    //       var cube = element.mesh;
+    //       cube.material.color.set(value);
+    //     }
+    //   }.bind(this)
+    // );
+    this.guiFolder.add(this.guiParms, "displayHelper").onChange(
+      function(value) {
+        this.sceneController.triggleHelper(value);
+      }.bind(this)
+    );
+    this.guiFolder.add(this.guiParms, "light1", 0.0, 2.0).onChange(
+      function(value) {
+        this.light1.intensity = value;
+      }.bind(this)
+    );
+    this.guiFolder.add(this.guiParms, "light2", 0.0, 2.0).onChange(
+      function(value) {
+        this.light2.intensity = value;
+      }.bind(this)
+    );
+    this.guiFolder.open();
   };
 
   this.initArrowGeometry = function() {
@@ -43,13 +95,13 @@ function Scene2(params) {
   };
   this.addLight = function() {
     // light
-    var light1 = new THREE.DirectionalLight(0xffffff, 1);
-    light1.position.set(1, 1, 1);
-    this.scene.add(light1);
+    this.light1 = new THREE.DirectionalLight(0xffffff, 1.0);
+    this.light1.position.set(1, 1, 1);
+    this.scene.add(this.light1);
 
-    var light2 = new THREE.DirectionalLight(0xffffff, 0.4);
-    light2.position.set(-1, -1, 1);
-    this.scene.add(light2);
+    this.light2 = new THREE.DirectionalLight(0xffffff, 0.4);
+    this.light2.position.set(-1, -1, 1);
+    this.scene.add(this.light2);
     this.scene.add(new THREE.AmbientLight(0x666666));
   };
 

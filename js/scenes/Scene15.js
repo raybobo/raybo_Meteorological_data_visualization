@@ -10,15 +10,46 @@ var scaleRate = 0.1;
 function Scene15(params) {
   this.init = function(SceneController) {
     this.scene = new THREE.Scene();
+    this.sceneController = SceneController;
     SceneController.scene = this.scene;
     SceneController.addHelper(10);
+    SceneController.orbitControls.enabled = true;
+    SceneController.cameraResetPos();
+    SceneController.triggleHelper(false);
+    SceneController.applyInfoTitleAndDetail(
+      "场景十五",
+      "二维线条矢量场\n" +
+        "\n " +
+        "通过加载预处理的流场数据，生成 2000 条线条在其中运动，基于每条线条的头部位置来计算其下一步的旋转角度并步进，所有计算都是在 CPU 中进行的。\n" +
+        "线条的颜色表示当前线条头部点的运行速度。\n" +
+        "右上角图形界面可以暂停动画。"
+    );
 
     this.addVectorVisualPlane();
     this.addLight();
     this.lineCount = 2000.0;
     this.addMeshLine();
   };
-
+  this.initSceneGUI = function(guiController) {
+    this.guiParms = {
+      displayHelper: false,
+      displayDataPlane: true,
+      pause: false
+    };
+    this.guiFolder = guiController.gui.addFolder("Scene");
+    this.guiFolder.add(this.guiParms, "displayHelper").onChange(
+      function(value) {
+        this.sceneController.triggleHelper(value);
+      }.bind(this)
+    );
+    this.guiFolder.add(this.guiParms, "displayDataPlane").onChange(
+      function(value) {
+        this.visualPlane.visible = value;
+      }.bind(this)
+    );
+    this.guiFolder.add(this.guiParms, "pause");
+    this.guiFolder.open();
+  };
   this.addLight = function() {
     // light
     var light1 = new THREE.DirectionalLight(0xffffff, 1);
@@ -39,18 +70,17 @@ function Scene15(params) {
     var texture = new THREE.TextureLoader().load(
       // "./../../assets/data/gfsPng/g.png"
       // "./../../assets/data/gfsPng/g.png"
-      "./../../assets/data/windsPng/rg.png"
+      "./echartData/windsPng/rg.png"
       // "./../../assets/data/windsPng/g.png"
     );
     texture.flipY = false;
-    console.log(texture);
-    
     var material = new THREE.MeshBasicMaterial({
       color: 0xffffff,
-      map: texture
+      map: texture,
+      side: THREE.DoubleSide
     });
-    var cube = new THREE.Mesh(geometry, material);
-    this.scene.add(cube);
+    this.visualPlane = new THREE.Mesh(geometry, material);
+    this.scene.add(this.visualPlane);
   };
 
   this.addMeshLine = function() {
@@ -67,7 +97,7 @@ function Scene15(params) {
   };
 
   this.update = function() {
-    if (this.initMapAndLine) {
+    if (this.initMapAndLine && !this.guiParms.pause) {
       this.linesHolder.forEach(
         function(meahline) {
           meahline.update();
@@ -105,33 +135,36 @@ function Scene15MeshLine() {
   };
 
   this.update = function() {
-    if (this.life < 0 || this.checkBound()) {
+    var tempOffset = new THREE.Vector3(0, 0, 0);
+    if (this.life < 0 - this.initLife) {
       this.reset();
+    } else if (this.life < 0 || this.checkBound()) {
+      this.life -= 5;
+    } else {
+      this.life -= 1;
+      var dataX = Math.floor(this.head.x / scaleRate + dataW * 0.5);
+      var dataY = Math.floor(this.head.y / scaleRate + dataH * 0.5);
+      var dataVec = windsData.data[dataY * dataW + dataX];
+      var dataScaleRate = 0.008;
+      var tempOffset = new THREE.Vector3(
+        dataVec[0] * dataScaleRate,
+        dataVec[1] * dataScaleRate,
+        0
+      );
+
+      // dynamic change color
+      // console.log(tempOffset.length());
+      // var tempH = Maf.map(0.0, 100.0, 0.0, 255.0, Math.random() * 100.0);
+      var maxTempLen = 0.2;
+      var tempL = Math.min(Math.max(tempOffset.length(), 0.0), maxTempLen);
+      var tempH = Maf.map(maxTempLen, 0.0, 0.0, 100.0, tempL);
+      this.trailMaterial.uniforms.color.value = new THREE.Color(
+        "hsl(" + tempH + ", 190%, 50%)"
+      );
+      var tempW = Maf.map(0.0, maxTempLen, 0.004, 0.2, tempL);
+      this.trailMaterial.uniforms.lineWidth.value = tempW;
+      this.trailMaterial.uniformsNeedUpdate = true;
     }
-    
-    this.life--;
-
-    var dataX = Math.floor(this.head.x / scaleRate + dataW * 0.5);
-    var dataY = Math.floor(this.head.y / scaleRate + dataH * 0.5);
-    var dataVec = windsData.data[dataY * dataW + dataX];
-
-    
-
-    // this.headAngle = 0.1;
-    // this.tempAngle = Math.random() * 2.0 - 1.0;
-    // this.tempAngle = Maf.map(-1.0, 1.0, -Math.PI, Math.PI, this.tempAngle);
-    // var tempOffset = new THREE.Vector3(
-    //   0 + 0.2 * Math.cos(this.tempAngle),
-    //   0 + 0.2 * Math.sin(this.tempAngle),
-    //   0
-    // );
-    var dataScaleRate = 0.004;
-    var tempOffset = new THREE.Vector3(
-      dataVec[0] * dataScaleRate,
-      dataVec[1] * dataScaleRate,
-      0
-    );
-
 
     this.head.add(tempOffset);
     // console.log(this.trailLine.advance);
@@ -143,6 +176,7 @@ function Scene15MeshLine() {
 
   this.initMesh = function() {
     this.life = Math.floor((Math.random() + 1.0) * this.initLife);
+
     this.trailStartPos = this.getHead();
     this.head = this.trailStartPos;
     this.trailGeometry = new THREE.Geometry();
@@ -152,7 +186,7 @@ function Scene15MeshLine() {
 
     this.trailLine = new MeshLine();
     this.trailLine.setGeometry(this.trailGeometry, function(p) {
-      return 1 * Maf.parabola( p, 1 );
+      return 1 * Maf.parabola(p, 1);
     }); // makes width taper
 
     // color hue
@@ -160,6 +194,7 @@ function Scene15MeshLine() {
 
     this.trailMaterial = new MeshLineMaterial({
       color: new THREE.Color("hsl(" + tempH + ", 190%, 50%)"),
+      // color:  new THREE.Color( 0xff00fff ),
       // opacity: 1,
       resolution: this.resolution,
       sizeAttenuation: 1,
@@ -167,7 +202,7 @@ function Scene15MeshLine() {
       near: 1,
       far: 100000,
       depthTest: false,
-      blending: THREE.AdditiveBlending,
+      // blending: THREE.AdditiveBlending,
       // transparent: true,
       side: THREE.DoubleSide
     });

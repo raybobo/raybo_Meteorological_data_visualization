@@ -9,6 +9,7 @@ function Scene2(params) {
   this.moveSpeed = 0.05;
   this.init = function(SceneController) {
     this.scene = new THREE.Scene();
+    this.sceneController = SceneController;
     this.initArrowGeometry();
     this.initArrowMesh();
     this.addLight();
@@ -16,6 +17,47 @@ function Scene2(params) {
     this.addNoiseCube();
     SceneController.scene = this.scene;
     SceneController.addHelper(10);
+
+    
+    SceneController.orbitControls.enabled = true;
+    SceneController.cameraResetPos();
+
+    
+    SceneController.applyInfoTitleAndDetail(
+      "场景三",
+      "二维运动箭头。\n" +
+        "\n " +
+        "通过 noise 函数模拟流场，基于每个箭头位置计算当前前进方向向前步进。若箭头进入边界则在框中重新随机生成。\n" +
+        "右上角图形界面可以调整箭头颜色。"
+    );
+  };
+  
+  this.initSceneGUI = function(guiController) {
+    this.guiParms = {
+      arrowColor: "#ffae23",
+      
+      displayHelper : true
+      // light1: 1.0,
+      // light2: 0.1
+    };
+    // console.log(guiController);
+    this.guiFolder = guiController.gui.addFolder("Scene");
+    this.guiFolder.add(this.guiParms, "displayHelper").onChange(
+      function(value) {
+        this.sceneController.triggleHelper(value);
+      }.bind(this)
+    );
+    this.guiFolder.addColor(this.guiParms, "arrowColor").onChange(
+      function(value) {
+        for (let index = 0; index < this.arrowHolder.length; index++) {
+          var element = this.arrowHolder[index];
+          var cube = element.mesh;
+          cube.material.color.set(value);
+        }
+      }.bind(this)
+    );
+    
+    this.guiFolder.open();
   };
 
   this.addBorder = function() {

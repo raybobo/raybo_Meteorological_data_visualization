@@ -20,6 +20,20 @@ function Scene9(params) {
     this.addLight();
     SceneController.scene = this.scene;
     SceneController.addHelper(10);
+
+    SceneController.orbitControls.enabled = false;
+    SceneController.cameraResetPos();
+    SceneController.triggleHelper(false);
+    SceneController.applyInfoTitleAndDetail(
+      "场景九",
+      "光线追踪渲染体积云。\n" +
+        "\n " +
+        "通过算法生成体积云原型并加入一定的 noise 置换，然后使用光线步进算法进行渲染，最终将结果渲染到一个片面中。\n"
+    );
+  };
+  this.initSceneGUI = function(guiController) {
+
+    // this.guiFolder.open();
   };
   this.addLight = function() {
     // light

@@ -12,19 +12,18 @@ import Scene7 from './scenes/Scene7.js';
 import Scene8 from './scenes/Scene8.js';
 import Scene9 from './scenes/Scene9.js';
 import Scene10 from './scenes/Scene10.js';
-import Scene11 from './scenes/Scene11.js';
+import Scene11 from './scenes/Scene1.js';
 import Scene12 from './scenes/Scene12.js';
 import Scene13 from './scenes/Scene13.js';
 import Scene14 from './scenes/Scene14.js';
 import Scene15 from './scenes/Scene15.js';
+import Scene16 from './scenes/Scene16.js';
+import Scene17 from './scenes/Scene17.js';
 
 function SceneController() {
   this.init = function (initSceneIndex) {
     this.threeSetup();
-
-    this.sceneInit(initSceneIndex);
-
-    this.addControls();
+    this.addOrbitControls();
     this.postProcessingSetup();
   };
 
@@ -41,13 +40,17 @@ function SceneController() {
     // camera
     this.camera = new THREE.PerspectiveCamera(
       72, window.innerWidth / window.innerHeight, 0.1, 10000);
+    this.cameraResetPos();
 
-    this.cameraRadius = 20;
-    this.cameraHeight = 1.28;
-    this.camera.position.set(0, this.cameraHeight, this.cameraRadius);
+    };
+    this.cameraResetPos = function () {
+      this.cameraRadius = 20;
+      this.cameraHeight = 1.28;
+      this.camera.position.set(0, this.cameraHeight, this.cameraRadius);
+  
+      this.cameraTarget = new THREE.Vector3(0, 0, 0);
+      this.camera.lookAt(this.cameraTarget);
 
-    this.cameraTarget = new THREE.Vector3(0, 0, 0);
-    this.camera.lookAt(this.cameraTarget);
   };
   this.sceneInit = function (input) {
     
@@ -68,12 +71,24 @@ function SceneController() {
     this.sceneHolder.s13 = Scene13;
     this.sceneHolder.s14 = Scene14;
     this.sceneHolder.s15 = Scene15;
-
+    this.sceneHolder.s16 = Scene16;
+    this.sceneHolder.s17 = Scene17;
     var nowScene = Object.values(this.sceneHolder)[input - 1];
     this.sceneRaybo = new nowScene();
     this.sceneRaybo.init(this);
+    
+    // each scene gui init
+    this.guiController.gui.removeFolder("Scene");
+    // console.log(this.);
+    // 
+    this.sceneRaybo.initSceneGUI(this.guiController);
 
   };
+  // this.initSceneGUI = function(guiController) {
+  //   console.log(guiController.gui);
+    
+  //   this.sceneRaybo.initSceneGUI(guiController);
+  // }
 
   this.postProcessingSetup = function () {
     this.renderPass = new RenderPass(this.scene, this.camera);
@@ -95,11 +110,20 @@ function SceneController() {
     this.composer.addPass(this.renderPass);
   };
 
-  this.addControls = function () {
+  this.addOrbitControls = function () {
     // controls
-    this.controls = new OrbitControls(this.camera);
+    this.orbitControls = new OrbitControls(this.camera);
+  };
+  this.applyInfoTitleAndDetail = function(title, detail) {
+    
+    document.getElementById("title").innerText = title;
+    document.getElementById("detail").innerText = detail;
   };
 
+  this.triggleHelper = function (inputFlag) {
+    this.axesHelper.visible = inputFlag;
+    this.gridHelper.visible = inputFlag;
+  }
   this.addHelper = function (width) {
     this.axesHelper = new THREE.AxesHelper(width);
     this.scene.add(this.axesHelper);
