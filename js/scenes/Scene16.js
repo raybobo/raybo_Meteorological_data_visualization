@@ -21,6 +21,7 @@ function Scene16(params) {
 
     SceneController.addHelper(10);
     SceneController.orbitControls.enabled = false;
+    SceneController.cameraResetPos();
     SceneController.triggleHelper(false);
     SceneController.applyInfoTitleAndDetail(
       "场景十六",

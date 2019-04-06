@@ -14,6 +14,9 @@ function Scene17(params) {
     this.scene = new THREE.Scene();
     this.sceneController = SceneController;
 
+    this.WIDTH = 128;
+    this.geoType = "Cone";
+
     this.addVectorVisualPlane();
     // gpgpu
     this.renderer = SceneController.renderer;
@@ -36,9 +39,11 @@ function Scene17(params) {
       displayHelper: false,
       displayDataPlane: true,
       particleMoveSpeed: 0.0001,
+      particleScale: 10.0,
       maxColor: "#ff2222",
       minColor: "#ffffff",
       particleType: "Cone",
+      textureWidth: "128 X 128",
       noiseNowTime: 0.0
     };
     this.guiFolder = guiController.gui.addFolder("Scene");
@@ -47,6 +52,36 @@ function Scene17(params) {
         this.sceneController.triggleHelper(value);
       }.bind(this)
     );
+    this.guiFolder
+      .add(this.guiParms, "textureWidth", [
+        "128 X 128",
+        "256 X 256",
+        "512 X 512",
+        "1024 X 1024",
+        "2048 X 2048"
+      ])
+      .onChange(
+        function(value) {
+          switch (value) {
+            case "128 X 128":
+              this.WIDTH = 128;
+              break;
+            case "256 X 256":
+              this.WIDTH = 256;
+              break;
+            case "512 X 512":
+              this.WIDTH = 512;
+              break;
+            case "1024 X 1024":
+              this.WIDTH = 1024;
+              break;
+            case "2048 X 2048":
+              this.WIDTH = 2048;
+              break;
+          }
+          this.initGPGPU();
+        }.bind(this)
+      );
     this.guiFolder
       .add(this.guiParms, "particleType", [
         "Cylinder",
@@ -57,37 +92,8 @@ function Scene17(params) {
       ])
       .onChange(
         function(value) {
-          // this.sceneController.triggleHelper(value);
-          // console.log(value);
-          switch (value) {
-            case "Cylinder":
-              this.createGpgpuObj(
-                new THREE.CylinderBufferGeometry(15, 15, 5, 6)
-              );
-              break;
-            case "Circle":
-              this.createGpgpuObj(
-                new THREE.CircleBufferGeometry( 20, 32 )
-              );
-              break;
-            case "Torus":
-              this.createGpgpuObj(
-                new THREE.TorusBufferGeometry(30, 4, 5, 3)
-              );
-              break;
-            case "Cone":
-              this.createGpgpuObj(
-                new THREE.ConeBufferGeometry(14, 40, 5)
-              );
-              break;
-            case "Box":
-              this.createGpgpuObj(
-                new THREE.BoxBufferGeometry(14, 40, 14)
-              );
-              break;
-          }
-
-          // this.posVal.material.uniforms.particleMoveSpeed.value = value;
+          this.geoType = value;
+          this.initGPGPU();
         }.bind(this)
       );
     this.guiFolder
@@ -98,6 +104,12 @@ function Scene17(params) {
           this.posVal.material.uniforms.particleMoveSpeed.value = value;
         }.bind(this)
       );
+    this.guiFolder.add(this.guiParms, "particleScale", 5.0, 20.0).onChange(
+      function(value) {
+        // this.sceneController.triggleHelper(value);
+        this.gpgpuObjMaterial.uniforms.uScale1.value = value;
+      }.bind(this)
+    );
     this.guiFolder.addColor(this.guiParms, "maxColor").onChange(
       function(value) {
         this.gpgpuObjMaterial.uniforms.startColor.value = new THREE.Color(
@@ -121,10 +133,27 @@ function Scene17(params) {
   };
   this.initGPGPU = function() {
     this.GPGPUinit = true;
-    this.WIDTH = 128;
     this.addGPGPUVisualPlane();
     this.initGpuCompute();
-    this.createGpgpuObj(new THREE.ConeBufferGeometry(14, 40, 5));
+    // this.createGpgpuObj(new THREE.ConeBufferGeometry(14, 40, 5));
+
+    switch (this.geoType) {
+      case "Cylinder":
+        this.createGpgpuObj(new THREE.CylinderBufferGeometry(15, 15, 5, 6));
+        break;
+      case "Circle":
+        this.createGpgpuObj(new THREE.CircleBufferGeometry(20, 32));
+        break;
+      case "Torus":
+        this.createGpgpuObj(new THREE.TorusBufferGeometry(30, 4, 5, 3));
+        break;
+      case "Cone":
+        this.createGpgpuObj(new THREE.ConeBufferGeometry(14, 40, 5));
+        break;
+      case "Box":
+        this.createGpgpuObj(new THREE.BoxBufferGeometry(14, 40, 14));
+        break;
+    }
     // setTimeout(function() {
     //   this.createGpgpuObj(new THREE.TorusBufferGeometry(30, 4, 5, 3));
 
@@ -183,7 +212,7 @@ function Scene17(params) {
         uSize: { type: "f", value: this.WIDTH },
         uTick: { type: "f", value: 0 },
         uScale2: { type: "v3", value: new THREE.Vector3(1.0, 1.0, 1.0) },
-        uScale1: { type: "f", value: 10.7 },
+        uScale1: { type: "f", value: 10.0 },
         startColor: { type: "v3v", value: new THREE.Color("#ff2222") },
         endColor: { type: "v3v", value: new THREE.Color("#ffffff") }
       },
@@ -214,7 +243,7 @@ function Scene17(params) {
       // "./../../assets/data/windsPng/g.png"
       function(texture) {
         // in this example we create the material when the texture is loaded
-        this.initGPGPU();
+        this.initGPGPU("Cone", 128);
       }.bind(this)
     );
     this.windsDataTexture.flipY = false;

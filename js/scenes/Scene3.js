@@ -3,7 +3,7 @@ import * as THREE from '../libs_es6/three.module.js';
 import Maf from "../module_es6/maf.js";
 import SimplexNoise from "../module_es6/simplex-noise.js";
 function Scene2(params) {
-  this.arrowNum = 3000;
+  this.arrowNum = 2000;
   this.gridNum = 20;
   this.tempScale = 0.08;
   this.moveSpeed = 0.05;

@@ -36,8 +36,8 @@ var simulationPos = [
   "	 nowLife -= 0.01;",
   "	 if (nowLife < 0.0) {",
   "	 	 nowLife = 1.0;",
-  "	 	 nowPos.x = rand(nowPos.xy);",
-  "	 	 nowPos.y = rand(nowPos.yx);",
+  "	 	 nowPos.x = rand(nowPos.xy+uv);",
+  "	 	 nowPos.y = rand(nowPos.yx+uv);",
   "	 } ",
   // check out of box
   "	 if (nowPos.x < 0.0 || nowPos.x > 1.0 || nowPos.y < 0.0 || nowPos.y > 1.0) {",

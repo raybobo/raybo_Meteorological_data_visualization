@@ -14,11 +14,11 @@ function Scene2(params) {
     this.addNoiseCube();
     SceneController.scene = this.scene;
     SceneController.addHelper(10);
-
     
+    this.nowTime = 0;
     SceneController.orbitControls.enabled = true;
     SceneController.cameraResetPos();
-    
+
     SceneController.applyInfoTitleAndDetail(
       "场景二",
       "二维定点箭头 21 X 21 矩阵。\n" +
@@ -36,7 +36,8 @@ function Scene2(params) {
       arrowColor: "#ffae23",
       light1: 1.0,
       light2: 0.1,
-      displayHelper : true
+      displayHelper: true,
+      pause: false
     };
     // console.log(guiController);
     this.guiFolder = guiController.gui.addFolder("Scene");
@@ -54,6 +55,7 @@ function Scene2(params) {
         this.sceneController.triggleHelper(value);
       }.bind(this)
     );
+    // this.guiFolder.add(this.guiParms, "pause");
     this.guiFolder.add(this.guiParms, "light1", 0.0, 2.0).onChange(
       function(value) {
         this.light1.intensity = value;
@@ -193,6 +195,9 @@ function Scene2(params) {
   };
 
   this.update = function(nowTime) {
+    // this.nowTime += 0.01;
+    // if(this.guiParms.pause) {
+    // }
     this.arrowMeshUpdate(nowTime);
   };
 }
